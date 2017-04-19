@@ -1,6 +1,8 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <stdio.h>
+// Para png #include <SDL_image.h>
+
 
 using namespace std ;
 
@@ -17,6 +19,21 @@ SDL_Surface* gScreenSurface = NULL;
 //The image we will load and show on the screen
 SDL_Surface* gHelloWorld = NULL;
 
+enum Squares {
+	Square_0
+	Square_1
+	Square_2
+	Square_3
+	Square_4
+	Square_5
+	Square_6
+	Square_7
+	Square_8
+	Square_Bomb
+	Square_Flag
+	Square_Border
+}
+
 bool init () ;
 bool loadMedia() ;
 void close () ;
@@ -27,6 +44,10 @@ void close () ;
 	
 int main( int argc, char* args[] )
 {
+	bool quit = false ;
+	
+	SDL_Event evento ;	
+
 	//Start up SDL and create window
 	if ( !init() )	cerr << "Failed to initialize!" << endl ;
 	else
@@ -35,14 +56,17 @@ int main( int argc, char* args[] )
 		if ( !loadMedia() )	cerr << "Failed to load media!" << endl ;
 		else
 		{
-			//Apply the image
-			SDL_BlitSurface( gHelloWorld, NULL, gScreenSurface, NULL );
-			
-			//Update the surface
-			SDL_UpdateWindowSurface( gWindow );
-
-			//Wait two seconds
-			SDL_Delay( 3000 );
+			while(!quit) {
+				SDL_PollEvent(&evento) ;
+				if (evento.type == SDL_QUIT) quit = true ;
+				else {	
+					//Apply the image
+					SDL_BlitSurface( gHelloWorld, NULL, gScreenSurface, NULL );
+				
+					//Update the surface
+					SDL_UpdateWindowSurface( gWindow );
+				}
+			}
 		}
 	}
 
@@ -114,6 +138,16 @@ void close()
 }
 
 /*/////////// VER PARA QUE SIRVE /////////////////////////
+
+bool loadMedia()
+{
+	//Loading success flag
+	bool success = true;
+
+	gSquaresSurfaces[Square_0] = loadSurface( "files/0.png
+
+	return success;
+}
 
 bool loadMedia()
 {

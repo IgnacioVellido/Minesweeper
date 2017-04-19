@@ -1,25 +1,46 @@
-// Buscaminas - v.0.1
+// Buscaminas - v.0.3
 // 27/4/2017 - 
+// Mejorar algoritmo de aleatorio, casi siempre salen los mismos
 
-// Al hacer click izq sobre una bandera, no desvelar
-// No mostrar las marcadas con casillas
-// Moduralizar - clase, metodos, main
-//http://www.chiark.greenend.org.uk/~sgtatham/puzzles/doc/mines.html#mines
+// NO INCLUIR ESTO - PRUEBA
+#include <iostream>
+using namespace std ;
 
 // Iniciar aleatorio
 #include <ctime>
 #include <cstdlib>
 
-// Contiene sus coordenadas, y si se encuentra marcado (deberia ser por defecto false, comprobar si funciona)
-struct Posicion {
-	int fil, col ;
-	bool bandera = false ;
-}
+// Esto está en el main !
+enum Squares {
+	Square_0 ,
+	Square_1 ,
+	Square_2 ,
+	Square_3 ,
+	Square_4 ,
+	Square_5 ,
+	Square_6 ,
+	Square_7 ,
+	Square_8 ,
+	Square_Bomb ,
+	Square_Flag ,
+	Square_Border
+} ;
 
-// Genera un nº aleatorio entre las filas/colum posibles (COMPROBAR)
-// Si se quiere probar con vector - tam*tam+1
-void GeneraAleatorio (){
-	const int MY_MAX_RAND = tamanio + 1 ;
+struct Posicion {
+	int valor ;
+	bool bandera ;
+	bool mostrada ;
+//	SDL_Surface * Imagen ; // Puntero a la imagen
+
+	// Necesita constructor
+	Posicion () : valor(0), bandera(false), mostrada(false) {} 
+} ;
+
+// Genera un nº aleatorio entre las filas/colum posibles
+// Si tam = 10, genera números del 0 al 9 
+// CUIDADO CON LOS PARAMETROS
+int GeneraAleatorio (){
+	const int MY_MAX_RAND = 4 ;	// Arreglar
 	time_t t ;
 	srand ((int) time(&t));
 
@@ -30,93 +51,95 @@ class Tablero {
 private:
 	int nivel , // Define el numero de bombas 
 	    tamanio ; // Define el tamaño de la matriz , intentar que sea constante
-	Posicion matriz [tamanio] [tamanio] ;
-	bool mostrados [tamanio] [tamanio] ;
+//	Posicion matriz [tamanio] [tamanio] ;
 
-	// Añade bombas en posiciones aleatorias hasta un maximo definido por el nivel 
-	void AniadeBomb () {
+	// Añade bombas en posiciones aleatorias hasta un maximo definido por el nivel  - FUNCIONA
+	void InsertBomb () {
 		int fila , colum ,
 		    contador = 0 ;
 
 		while (contador != nivel) {
 			fila = GeneraAleatorio() ;
 			colum = GeneraAleatorio() ;
-			// Se podriaa acceder con punteros (?)
-			if (matriz[fila][colum] != -1) {
-				matriz[fila][colum] = -1 ; contador++ ;
+			// Se podria acceder con punteros (?)
+			if (matriz[fila][colum].valor != Square_Bomb) {
+				matriz[fila][colum].valor = Square_Bomb ; contador++ ; cout << "bum" << endl ;
 			} 
 		}
 	}
+public:
+// NO INCLUIR ESTO - PRUEBA
+	Posicion matriz [8] [8] ;
 
-	// Cuenta el numero de bombas adyacentes
-	// Condiciones: - NO ser bomba (-1) - Posicion accesible
-	void RellenaTablero () {
-		int recorre_fil = 0 , recorre_colum = 0 ,
+	Tablero (int bomb, int tam) : nivel(bomb) , tamanio(tam) {
+		// NO INCLUIR ESTO - PRUEBA
+		for (int i = 0 ; i < tamanio ; i++) {
+			for (int j = 0 ; j < tamanio ; j++) 
+				matriz[i][j].valor = 0 ;
+		}
+		InsertBomb() ;
+	}
+	//	void MuestraRecursivo (int, int) ; Si lo saco - no compila ARREGLAR
+	// Empiezan en 0 - FUNCIONA - MEJORAR
+	void MuestraRecursivo (int i , int j) {
+		//if (&matriz[i][j]) { No furula
+		bool accesible = (i >= 0 && i < tamanio) && (j >= 0 && j < tamanio) ;
+		if (accesible) {
+			if (matriz[i][j].bandera == false && matriz[i][j].mostrada == false ) {
+				if (matriz[i][j].valor != Square_Bomb) {
+					cout << "estoy en: " << i << j <<  endl ;
+					// Calcula el numero			
+					for (int pos_i = i - 1 ; pos_i <= i+1 ; pos_i++) { 
+						for (int pos_j = j-1 ; pos_j <= j+1 ; pos_j++) 	{ 
+							accesible = (pos_i >= 0 && pos_i < tamanio) && (pos_j >= 0 && pos_j < tamanio) ;
+							// if (&matriz[pos_i][pos_j]) { NOPE
+							if (accesible) {
+								if (matriz[pos_i][pos_j].valor == Square_Bomb)
+									matriz[i][j].valor++ ;
+							}
+						}
+					}
 
-		for (recorre_fil ; recorre_fil < tamanio - 1 ; recorre_fil++) {
-			for (recorre_colum ; recorre_colum < tamanio - 1 ; recorre_colum) {
-				if (matriz[recorre_fil][recorre_colum] != -1)
-					matriz[recorre_fil][recorre_colum] = Ocurrencias(recorre_fil,recorre_colum) ;
+					// Mostrar posicion
+					matriz[i][j].mostrada = true ;
+
+					// En el original, si es un número no muestra más
+					if (matriz[i][j].valor == 0) {
+						MuestraRecursivo(i-1,j) ;
+						MuestraRecursivo(i+1,j) ;
+						MuestraRecursivo(i,j-1) ;
+						MuestraRecursivo(i,j+1) ;	
+					}
+				}
 			}
 		}
 	}
 
-	// Cuenta el numero de bombas alredor de la posicion dada - Evitar repeticion de codigo
-	// Primero mira si es posicion valido, luego mira si es bomba (-1)
-	int Ocurrencias (int fil, int col) {
-		int contador = 0 ;
-		
-		// Parte izquierda			
-		if (&matriz[fil-1][col-1]) {
-			if (matriz[fil-1][col-1] == -1) contador++ ;
-		}
-		if (&matriz[fil][col-1]) {
-			if (matriz[fil][col-1] == -1) contador++ ;
-		}
-		if (&matriz[fil+1][col-1]) {
-			if (matriz[fil+1][col-1] == -1) contador++ ;
-		}
-		
-		// Parte derecha
-		if (&matriz[fil-1][col+1]) {
-			if (matriz[fil-1][col+1] == -1) contador++ ;
-		}
-		if (&matriz[fil][col+1]) {
-			if (matriz[fil][col+1] == -1) contador++ ;
-		}
-		if (&matriz[fil+1][col+1]) {
-			if (matriz[fil+1][col+1] == -1) contador++ ;
-		}
-
-		// Parte superior
-		if (&matriz[fil-1][col]) {
-			if (matriz[fil][col] == -1) contador++ ;
-		}
-		if (&matriz[fil+1][col]) {
-			if (matriz[fil+1][col] == -1) contador++ ;
-		}
-
-		return contador ;
+	// FUNCIONA 
+	void Bandera (int i, int j) {
+		matriz[i][j].bandera = !matriz[i][j].bandera ;
 	}
-	
-	
-public:
-	Tablero (int bomb, int tam) : nivel(bomb) , tamanio(tam) {
-		// Iniciar mostrados a 0
-		for (int i = 0 ; i < tamanio ; i++) {
-			for (int j = 0 ; j < tamanio ; j++)
-				mostrados[i][j] = false ;
-		}
-	}
-	// Mostar hasta que encuentra numeros
-	//void Mostrar
-	// Si es bomba, mostrar
+
 	//void Derrota
-	bool Victoria () {}	
-	friend GeneraAleatorio () ;
+	//bool Victoria () {}	// Todas las casillas mostradas menos las bombas, devuelve un bool para el main
+	friend int GeneraAleatorio () ;
+} ;
+
+
+// Para probar
+int main () {
+	Tablero juego(5,8) ;	// 5 bombas, 8x8
+	juego.MuestraRecursivo(0,1) ;
+	juego.MuestraRecursivo(2,7) ;
+	juego.MuestraRecursivo(5,3) ;
+
+	for (int i = 0 ; i < 8 ; i++) {
+		for (int j = 0 ; j < 8 ; j++) 
+				cout << juego.matriz[i][j].valor << " " ;
+		cout << endl ;
+	}
+	
 }
 
-// Funcion menu: Indica instrucciones, forma de salir
-// Funcion victoria: Muestra victoria (deberia mostrar tiempo)
-// Funcion derrota: Muestra bombas (o todo), congela pantalla, reintentar
-
+	// Funcion menu: Indica instrucciones (probar con multihilo)
+	// Funcion derrota: Muestra todo, congela pantalla, reintentar
