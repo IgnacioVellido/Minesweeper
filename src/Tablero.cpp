@@ -10,7 +10,7 @@ using namespace std ;
 #include <ctime>
 #include <cstdlib>
 
-// Esto está en el main !
+// Esto estÃ¡ en el main !
 enum Squares {
 	Square_0 ,
 	Square_1 ,
@@ -36,12 +36,12 @@ struct Posicion {
 	Posicion () : valor(0), bandera(false), mostrada(false) {} 
 } ;
 
-// Genera un nº aleatorio entre las filas/colum posibles
-// Si tam = 10, genera números del 0 al 9 
+// Genera un nÂº aleatorio entre las filas/colum posibles
+// Si tam = 10, genera nÃºmeros del 0 al 9 
 // CUIDADO CON LOS PARAMETROS
-int GeneraAleatorio (){
+int GeneraAleatorio (time_t &t){
 	const int MY_MAX_RAND = 4 ;	// Arreglar
-	time_t t ;
+	// time_t t ;
 	srand ((int) time(&t));
 
 	return (rand() % MY_MAX_RAND) ;
@@ -50,17 +50,17 @@ int GeneraAleatorio (){
 class Tablero {
 private:
 	int nivel , // Define el numero de bombas 
-	    tamanio ; // Define el tamaño de la matriz , intentar que sea constante
+	    tamanio ; // Define el tamaÃ±o de la matriz , intentar que sea constante
 //	Posicion matriz [tamanio] [tamanio] ;
 
-	// Añade bombas en posiciones aleatorias hasta un maximo definido por el nivel  - FUNCIONA
+	// AÃ±ade bombas en posiciones aleatorias hasta un maximo definido por el nivel  - FUNCIONA
 	void InsertBomb () {
 		int fila , colum ,
 		    contador = 0 ;
 
 		while (contador != nivel) {
-			fila = GeneraAleatorio() ;
-			colum = GeneraAleatorio() ;
+			fila = GeneraAleatorio(time_t t1) ;
+			colum = GeneraAleatorio(time_t t2) ;
 			// Se podria acceder con punteros (?)
 			if (matriz[fila][colum].valor != Square_Bomb) {
 				matriz[fila][colum].valor = Square_Bomb ; contador++ ; cout << "bum" << endl ;
@@ -93,7 +93,7 @@ public:
 						for (int pos_j = j-1 ; pos_j <= j+1 ; pos_j++) 	{ 
 							accesible = (pos_i >= 0 && pos_i < tamanio) && (pos_j >= 0 && pos_j < tamanio) ;
 							// if (&matriz[pos_i][pos_j]) { NOPE
-							if (accesible) {
+							if (accesible && i != j) {
 								if (matriz[pos_i][pos_j].valor == Square_Bomb)
 									matriz[i][j].valor++ ;
 							}
@@ -103,7 +103,7 @@ public:
 					// Mostrar posicion
 					matriz[i][j].mostrada = true ;
 
-					// En el original, si es un número no muestra más
+					// En el original, si es un nÃºmero no muestra mÃ¡s
 					if (matriz[i][j].valor == 0) {
 						MuestraRecursivo(i-1,j) ;
 						MuestraRecursivo(i+1,j) ;
