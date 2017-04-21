@@ -1,14 +1,13 @@
 // Buscaminas - v.0.3
 // 27/4/2017 - 
-// Mejorar algoritmo de aleatorio, casi siempre salen los mismos
+// Para compilar (debido al aleatorio) -std=c++11
 
 // NO INCLUIR ESTO - PRUEBA
 #include <iostream>
 using namespace std ;
 
 // Iniciar aleatorio
-#include <ctime>
-#include <cstdlib>
+#include <random> 
 
 // Esto está en el main !
 enum Squares {
@@ -36,22 +35,21 @@ struct Posicion {
 	Posicion () : valor(0), bandera(false), mostrada(false) {} 
 } ;
 
-// Genera un nº aleatorio entre las filas/colum posibles
-// Si tam = 10, genera números del 0 al 9 
-// CUIDADO CON LOS PARAMETROS
-int GeneraAleatorio (time_t &t){
-	const int MY_MAX_RAND = 4 ;	// Arreglar
-	// time_t t ;
-	srand ((int) time(&t));
-
-	return (rand() % MY_MAX_RAND) ;
-}
-
 class Tablero {
 private:
 	int nivel , // Define el numero de bombas 
 	    tamanio ; // Define el tamaño de la matriz , intentar que sea constante
 //	Posicion matriz [tamanio] [tamanio] ;
+
+	// Genera un nº aleatorio entre las filas/colum posibles
+	// Si tam = 10, genera números del 0 al 9 
+	int GeneraAleatorio (){
+		random_device rd;  //Will be used to obtain a seed for the random number engine
+		mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
+		uniform_int_distribution<> dis(1, tamanio); // Donde 8 - tam
+
+		return (dis(gen)) ;
+	}
 
 	// Añade bombas en posiciones aleatorias hasta un maximo definido por el nivel  - FUNCIONA
 	void InsertBomb () {
@@ -59,8 +57,8 @@ private:
 		    contador = 0 ;
 
 		while (contador != nivel) {
-			fila = GeneraAleatorio(time_t t1) ;
-			colum = GeneraAleatorio(time_t t2) ;
+			fila = GeneraAleatorio() ;
+			colum = GeneraAleatorio() ;
 			// Se podria acceder con punteros (?)
 			if (matriz[fila][colum].valor != Square_Bomb) {
 				matriz[fila][colum].valor = Square_Bomb ; contador++ ; cout << "bum" << endl ;
@@ -122,16 +120,12 @@ public:
 
 	//void Derrota
 	//bool Victoria () {}	// Todas las casillas mostradas menos las bombas, devuelve un bool para el main
-	friend int GeneraAleatorio () ;
 } ;
 
 
 // Para probar
 int main () {
-	Tablero juego(5,8) ;	// 5 bombas, 8x8
-	juego.MuestraRecursivo(0,1) ;
-	juego.MuestraRecursivo(2,7) ;
-	juego.MuestraRecursivo(5,3) ;
+	Tablero juego(8,8) ;	// 5 bombas, 8x8
 
 	for (int i = 0 ; i < 8 ; i++) {
 		for (int j = 0 ; j < 8 ; j++) 
