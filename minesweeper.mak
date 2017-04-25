@@ -7,10 +7,13 @@ SRC=./src
 INC=./include
 
 
-all: $(BIN)/Minesweeper
+all: $(BIN)/Minesweeper $(OBJ)/Tablero.o
 
-$(BIN)/Minesweeper: ./src/Main.cpp
-	g++ -o $@ $^ -lSDL2
+$(BIN)/Minesweeper: $(SRC)/Main.cpp
+	g++ -o $@ $^ -lSDL2 -lSDL2_image
+
+$(OBJ)/Tablero.o: $(SRC)/Tablero.cpp
+	g++ -c -o $@ $^ -std=c++11
 
 clean:
 	@printf "Borrando modulos objeto...\n"

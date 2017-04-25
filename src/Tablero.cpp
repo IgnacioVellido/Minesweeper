@@ -1,4 +1,4 @@
-// Buscaminas - v.0.4
+// Buscaminas - v.0.4.1
 // 27/4/2017 - 
 // Para compilar (debido al aleatorio) -std=c++11
 
@@ -63,6 +63,19 @@ private:
 			} 
 		}
 	}
+	// Precondición: No es bomba
+	void CalculaValor (int fila, int colum) {
+		bool accesible ;
+		for (int i = fila - 1 ; i <= fila+1 ; i++) { 
+			for (int j = colum - 1 ; j <= colum+1 ; j++) 	{ 
+				accesible = (i >= 0 && i < tamanio) && (j >= 0 && j < tamanio) ;
+				if (accesible && fila != colum) {
+					if (matriz[i][j].valor == Square_Bomb)
+						matriz[fila][colum].valor++ ;
+				}
+			}
+		}
+	}
 public:
 	// Matriz, comienza con vector de punteros	
 	Posicion **matriz ;
@@ -77,34 +90,32 @@ public:
 		}
 		InsertBomb() ;
 	}
-	//	void MuestraRecursivo (int, int) ; Si lo saco - no compila ARREGLAR
-	// Empiezan en 0 - FUNCIONA - MEJORAR
-	void MuestraRecursivo (int i , int j) {
-		bool accesible = (i >= 0 && i < tamanio) && (j >= 0 && j < tamanio) ;
-		if (accesible) {
-			if (matriz[i][j].bandera == false && matriz[i][j].mostrada == false ) {
-				if (matriz[i][j].valor != Square_Bomb) {
-					cout << "estoy en: " << i << j <<  endl ;
-					// Calcula el numero			
-					for (int pos_i = i - 1 ; pos_i <= i+1 ; pos_i++) { 
-						for (int pos_j = j-1 ; pos_j <= j+1 ; pos_j++) 	{ 
-							accesible = (pos_i >= 0 && pos_i < tamanio) && (pos_j >= 0 && pos_j < tamanio) ;
-							if (accesible && i != j) {
-								if (matriz[pos_i][pos_j].valor == Square_Bomb)
-									matriz[i][j].valor++ ;
-							}
-						}
-					}
 
-					// Mostrar posicion
-					matriz[i][j].mostrada = true ;
+	~Tablero() {
+		for (int i = 0 ; i < tamanio ; i++)
+			delete[] matriz[i] ;
+		delete[] matriz ;
+	}
+
+	//	void MuestraRecursivo (int, int) ; Si lo saco - no compila ARREGLAR
+	// Empiezan en 0 - FUNCIONA
+	void MuestraRecursivo (int fila , int colum) {
+		bool accesible = (fila >= 0 && fila < tamanio) && (colum >= 0 && colum < tamanio) ;
+		if (accesible) {
+			if (matriz[fila][colum].bandera == false && matriz[fila][colum].mostrada == false ) {
+				if (matriz[fila][colum].valor != Square_Bomb) {
+					cout << "estoy en: " << fila << colum <<  endl ;
+					CalculaValor(fila,colum) ;
+
+					// Mostrar posicion - Llamar a una función que lo haga y que incluya:
+					matriz[fila][colum].mostrada = true ;
 
 					// En el original, si es un número no muestra más
-					if (matriz[i][j].valor == 0) {
-						MuestraRecursivo(i-1,j) ;
-						MuestraRecursivo(i+1,j) ;
-						MuestraRecursivo(i,j-1) ;
-						MuestraRecursivo(i,j+1) ;	
+					if (matriz[fila][colum].valor == 0) {
+						MuestraRecursivo(fila-1,colum) ;
+						MuestraRecursivo(fila+1,colum) ;
+						MuestraRecursivo(fila,colum-1) ;
+						MuestraRecursivo(fila,colum+1) ;	
 					}
 				}
 			}
@@ -115,9 +126,31 @@ public:
 	void Bandera (int i, int j) {
 		matriz[i][j].bandera = !matriz[i][j].bandera ;
 	}
-
-	//void Derrota
-	//bool Victoria () {}	// Todas las casillas mostradas menos las bombas, devuelve un bool para el main
+	
+	// Muestra todas las casillas que no son bomba
+	void Derrota () {
+		for (int i = 0 ; i < tamanio ; i++) {
+			for (int j = 0 ; j < tamanio ; j++) {
+				if (matriz[i][j].mostrada == false && matriz[i][j].valor != Square_Bomb) {
+					CalculaValor(i,j) ; 
+					// Funcion mostrar (imagen) 
+				}
+			}
+		}
+		// Congelar, imagen derrota y reintentar
+	}
+	
+	// Todas las casillas mostradas menos las bombas, devuelve un bool para el main
+	bool Victoria () {
+		bool victoria = true ;
+		for (int i = 0 ; i < tamanio ;  i++) {
+			for (int j = 0 ; j < tamanio; j++) {
+				if (matriz[i][j].valor != Square_Bomb && matriz[i][j].mostrada == false)
+					victoria = false ;
+			}
+		}
+		return victoria ;
+	}
 } ;
 
 
