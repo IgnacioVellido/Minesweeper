@@ -1,22 +1,4 @@
 #include "Tablero.h"
-/*
-void Tablero::Actualiza () {
-//	SDL_RenderClear(Renderer) ;
-//	SDL_Rect Viewport; 
-	for (int i = 0 ; i < tamanio ; i ++) {
-		for (int j = 0 ; j < tamanio ; j ++) {
-			matriz[i][j].casilla.x = i*BUTTON_WIDTH_HEIGHT ; matriz[i][j].casilla.y = j*BUTTON_WIDTH_HEIGHT ;
-			matriz[i][j].casilla.w = matriz[i][j].casilla.h = BUTTON_WIDTH_HEIGHT ;
-			SDL_RenderSetViewport (Renderer, &matriz[i][j].casilla) ;
-			if (matriz[i][j].bandera == false)
-				SDL_RenderCopy(Renderer,Images[matriz[i][j].valor], NULL, NULL) ;
-			else 
-				SDL_RenderCopy(Renderer,Images[Square_Flag], NULL, NULL) ;
-		}
-	}
-	SDL_RenderPresent(Renderer) ;
-}
-*/
 
 void Tablero::Bandera (int i, int j) {
 	if (matriz[i][j].mostrada == false) 	
@@ -82,16 +64,22 @@ void Tablero::MuestraRecursivo (int fila , int colum) {
 }
 	
 // Muestra todas las casillas que no son bomba
-void Tablero::Derrota () {
-	for (int i = 0 ; i < tamanio ; i++) {
-		for (int j = 0 ; j < tamanio ; j++) {
-			if (matriz[i][j].mostrada == false && matriz[i][j].valor != Square_Bomb) {
-				CalculaValor(i,j) ; 
-				// Funcion mostrar (imagen) 
+void Tablero::Derrota (int x, int y) {
+	bool derrota = false ;
+	if (matriz[x][y].valor == Square_Bomb) {
+		for (int i = 0 ; i < tamanio ; i++) {
+			for (int j = 0 ; j < tamanio ; j++) {
+				if (matriz[i][j].mostrada == false && matriz[i][j].valor != Square_Bomb) {
+					CalculaValor(i,j) ; 
+					matriz[i][j].mostrada == true ;
+				}
 			}
 		}
+		matriz[x][y].valor = Square_Boom ;
+		derrota = true ;
+		// Congelar, imagen derrota y reintentar (en el main (?))
 	}
-	// Congelar, imagen derrota y reintentar
+	return derrota ;
 }
 	
 // Todas las casillas mostradas menos las bombas, devuelve un bool para el main
