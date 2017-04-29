@@ -65,14 +65,14 @@ int main( int argc, char* args[] ) {
 					SDL_GetMouseState(&x, &y);
 			
 					Transforma(x) ; Transforma(y) ; 
-
+					
+//					if (tab.Victoria())
+//					else if (tab.Derrota(x,y))
+// 					else 
 					if (evento.button.button == SDL_BUTTON_LEFT)
 						tab.MuestraRecursivo(x,y) ; 
 					else if (evento.button.button == SDL_BUTTON_RIGHT)
 						tab.Bandera(x,y) ;
-
-//					if (tab.Victoria())
-//					else if (tab.Derrota())
 
 //Quitar				Des_Transforma(x) ; Des_Transforma(y) ; 
 					Actualiza(tab) ;  
@@ -224,8 +224,9 @@ void Actualiza (Tablero &tab) {
 			SDL_RenderSetViewport (Renderer, &tab.matriz[i][j].casilla) ;
 			if (tab.matriz[i][j].bandera == true)
 				SDL_RenderCopy(Renderer,Images[Square_Flag], NULL, NULL) ;
-			else if (tab.matriz[i][j].valor == Square_Bomb)
-				SDL_RenderCopy(Renderer,Images[Square_Hide], NULL, NULL) ;
+// Creo que sobra, solo pone banderas y sino su valor, porque por defecto tienen el de ocultación
+//	else if (tab.matriz[i][j].valor == Square_Bomb)
+//		SDL_RenderCopy(Renderer,Images[Square_Hide], NULL, NULL) ;
 			else 
 				SDL_RenderCopy(Renderer,Images[tab.matriz[i][j].valor], NULL, NULL) ;				
 		}
