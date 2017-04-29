@@ -1,4 +1,3 @@
-//#include "Interfaz.h"
 #include "Tablero.h"
 #include <iostream>
 using namespace std ;
@@ -13,15 +12,12 @@ const int SCREEN_WIDTH = 160;
 const int SCREEN_HEIGHT = 160;
 const int BUTTON_WIDTH_HEIGHT = 20;
 
-////Quitar	void Cambia (int, SDL_Rect, int, int) ;
 SDL_Texture* loadTexture (std::string path) ;
 bool loadMedia () ;
 inline void Transforma (int &pos) { pos /= BUTTON_WIDTH_HEIGHT ; }
 //Quitar inline void Des_Transforma (int &pos) { pos *= BUTTON_WIDTH_HEIGHT ; }
 bool init () ;
 void close () ;
-//Quitar void Base () ;
-
 void Actualiza (Tablero &tab) ;
 
 enum Nivel {
@@ -31,6 +27,7 @@ enum Nivel {
 	urbano = 60 
 } ;
 
+// Arreglar, hacer con imágenes
 int Menu () {
 	int niv ;
 	cout << "Elige un nivel\nFacil = 1\nMedio = 2\nDificil = 3\nHoli = 4" << endl ;
@@ -57,7 +54,6 @@ int main( int argc, char* args[] ) {
 		else {
 //			int niv = Menu() ;
 			Tablero tab(5,8) ;
-// Quitar		Base () ;
 			Actualiza(tab) ;
 
 			while(!quit) {
@@ -74,19 +70,11 @@ int main( int argc, char* args[] ) {
 						tab.MuestraRecursivo(x,y) ; 
 					else if (evento.button.button == SDL_BUTTON_RIGHT)
 						tab.Bandera(x,y) ;
-// Quitar					Cambia (Square_Flag, tab.matrix[x][y].casilla, Des_Transforma(x), Des_Transforma(y)) ;
 
 //					if (tab.Victoria())
 //					else if (tab.Derrota())
 
-//Quitar				//Update the surface -	SI SE ACTUALIZA SE PIERDE TODO 
-//Quitar				//SDL_UpdateWindowSurface(Window );
-
 //Quitar				Des_Transforma(x) ; Des_Transforma(y) ; 
-//Quitar				SDL_Rect casilla[5] ;
-
-// Quitar				Cambia(5, x, y, casilla[5]) ;
-//Quitar				Cambia(tab.matriz[x][y].valor, x, y, tab.matriz[x][y].casilla) ;
 					Actualiza(tab) ;  
 				}
 			}
@@ -95,21 +83,6 @@ int main( int argc, char* args[] ) {
 	//Free resources and close SDL
 	close();
 }
-
-/*////////////////////////////////////////////////////////////////
-// Esto superpone imágenes - CAMBIAR
-void Cambia (int img, SDL_Rect Viewport, int x, int y) {
-//	SDL_Rect Viewport ; 
-
-	Viewport.x = x ; Viewport.y = y ;
-	Viewport.w = Viewport.h = BUTTON_WIDTH_HEIGHT ;
-	SDL_RenderSetViewport (Renderer, &Viewport) ;
-	SDL_RenderCopy(Renderer,Images[img], NULL, NULL) ;
-
-	SDL_RenderPresent(Renderer) ;
-}
-/*///////////////////////////////////////////////////////////////
-
 
 SDL_Texture* loadTexture (std::string path) {
 	SDL_Texture* newTexture = NULL ;
@@ -242,25 +215,8 @@ void close() {
 	IMG_Quit() ;
 	SDL_Quit() ;
 }
-/*
-void Base () {
-	SDL_RenderClear(Renderer) ;
-	SDL_Rect Viewport; 
-	for (int i = 0 ; i <= SCREEN_WIDTH ; i += BUTTON_WIDTH_HEIGHT) {
-		for (int j = 0 ; j <= SCREEN_WIDTH ; j += BUTTON_WIDTH_HEIGHT) {
-			Viewport.x = i ; Viewport.y = j ;
-			Viewport.w = Viewport.h = BUTTON_WIDTH_HEIGHT ;
-			SDL_RenderSetViewport (Renderer, &Viewport) ;
-			SDL_RenderCopy(Renderer,Images[Square_Hide], NULL, NULL) ;
-		}
-	}
-	SDL_RenderPresent(Renderer) ;
-}
-*/
 
 void Actualiza (Tablero &tab) {
-//	SDL_RenderClear(Renderer) ;
-//	SDL_Rect Viewport; 
 	for (int i = 0 ; i < tab.GetTamanio() ; i ++) {
 		for (int j = 0 ; j < tab.GetTamanio() ; j ++) {
 			tab.matriz[i][j].casilla.x = i*BUTTON_WIDTH_HEIGHT ; tab.matriz[i][j].casilla.y = j*BUTTON_WIDTH_HEIGHT ;
@@ -276,4 +232,3 @@ void Actualiza (Tablero &tab) {
 	}
 	SDL_RenderPresent(Renderer) ;
 }
-
