@@ -3,11 +3,10 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include "Interfaz.h"
 // Iniciar aleatorio
 #include <random> 
 using namespace std ;
-/*
+
 enum Squares {
 	Square_0,
 	Square_1,
@@ -24,7 +23,7 @@ enum Squares {
 	Square_Hide,
 	Square_Total
 } ;
-*/
+
 struct Posicion {
 	int valor ;
 	bool bandera ;
@@ -68,16 +67,16 @@ public:
 			delete[] matriz[i] ;
 		delete[] matriz ;
 	}
+
+	int GetTamanio () { return tamanio ; }
 	
 	// Actualiza las imágenes
-	void Actualiza () ;
+//	void Actualiza () ;
 
 	void MuestraRecursivo (int fila , int colum) ;
 
 	// FUNCIONA 
-	void Bandera (int i, int j) {
-		matriz[i][j].bandera = !matriz[i][j].bandera ;		
-	}
+	void Bandera (int i, int j) ;
 	
 	// Muestra todas las casillas que no son bomba
 	void Derrota () ;

@@ -1,5 +1,5 @@
 #include "Tablero.h"
-
+/*
 void Tablero::Actualiza () {
 //	SDL_RenderClear(Renderer) ;
 //	SDL_Rect Viewport; 
@@ -16,7 +16,12 @@ void Tablero::Actualiza () {
 	}
 	SDL_RenderPresent(Renderer) ;
 }
+*/
 
+void Tablero::Bandera (int i, int j) {
+	if (matriz[i][j].mostrada == false) 	
+		matriz[i][j].bandera = !matriz[i][j].bandera ;		
+}
 
 int Tablero::GeneraAleatorio (){
 	random_device rd;  //Will be used to obtain a seed for the random number engine
@@ -38,11 +43,10 @@ void Tablero::InsertBomb () {
 			matriz[fila][colum].valor = Square_Bomb ; contador++ ;
 		} 
 	}
-}
-
+} 
 	// Precondición: No es bomba
 void Tablero::CalculaValor (int fila, int colum) {
-	bool accesible ;
+	bool accesible ; matriz[fila][colum].valor = 0 ;
 	for (int i = fila - 1 ; i <= fila+1 ; i++) { 
 		for (int j = colum - 1 ; j <= colum+1 ; j++) 	{ 
 			accesible = (i >= 0 && i < tamanio) && (j >= 0 && j < tamanio) ;
