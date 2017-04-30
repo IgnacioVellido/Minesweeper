@@ -40,7 +40,7 @@ private:
 	    tamanio ; // Define el tamaño de la matriz , intentar que sea constante
 
 	// Genera un nº aleatorio entre las filas/colum posibles
-	// Si tam = 10, genera números del 0 al 9 
+	// Si tamanio = 10, genera números del 0 al 9 
 	int GeneraAleatorio () ;
 
 	// Añade bombas en posiciones aleatorias hasta un maximo definido por el nivel  - FUNCIONA
@@ -79,7 +79,7 @@ public:
 	void Bandera (int i, int j) ;
 	
 	// Muestra todas las casillas que no son bomba
-	void Derrota () ;
+	bool Derrota (int x, int y) ;
 	
 	// Todas las casillas mostradas menos las bombas, devuelve un bool para el main
 	bool Victoria () ;
