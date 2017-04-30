@@ -61,18 +61,20 @@ public:
 		}
 		InsertBomb() ;
 	}
-
+	
+	/* Hace falta constructor de copia para el menú ???
+	Tablero(const Tablero &copia) {
+		
+	}
+	*/
 	~Tablero() {
 		for (int i = 0 ; i < tamanio ; i++)
 			delete[] matriz[i] ;
 		delete[] matriz ;
 	}
-
+	
 	int GetTamanio () { return tamanio ; }
 	
-	// Actualiza las imágenes
-//	void Actualiza () ;
-
 	void MuestraRecursivo (int fila , int colum) ;
 
 	// FUNCIONA 
