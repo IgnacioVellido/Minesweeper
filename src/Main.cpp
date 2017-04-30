@@ -5,6 +5,7 @@ using namespace std ;
 SDL_Window* Window = NULL ;
 SDL_Surface* Surface = NULL ;
 SDL_Texture* Images[Square_Total] = {NULL} ;
+SDL_Texture* Imag_menu[6] = {NULL} ;
 SDL_Renderer* Renderer = NULL ;
 
 //Screen dimension constants 8x8
@@ -12,35 +13,20 @@ const int SCREEN_WIDTH = 160;
 const int SCREEN_HEIGHT = 160;
 const int BUTTON_WIDTH_HEIGHT = 20;
 
+int Menu () ;
 SDL_Texture* loadTexture (std::string path) ;
 bool loadMedia () ;
 inline void Transforma (int &pos) { pos /= BUTTON_WIDTH_HEIGHT ; }
-//Quitar inline void Des_Transforma (int &pos) { pos *= BUTTON_WIDTH_HEIGHT ; }
 bool init () ;
 void close () ;
 void Actualiza (Tablero &tab) ;
 
 enum Nivel {
-	facil = 5 ,
-	medio = 15 ,
-	dificil = 30 ,
-	urbano = 60 
+	principiante = 10 ,
+	intermedio = 40 ,
+	experto = 99 ,
+	//urbano = 60 
 } ;
-
-// Arreglar, hacer con imágenes
-int Menu () {
-	int niv ;
-	cout << "Elige un nivel\nFacil = 1\nMedio = 2\nDificil = 3\nHoli = 4" << endl ;
-	cin >> niv ;
-	switch (niv) {
-		case 1: niv = facil ; break ;
-		case 2: niv = medio ; break ;
-		case 3: niv = dificil ; break ;
-		case 4: niv = urbano ; break ;
-		default: niv = facil ; break ;
-	}
-	return niv ;
-}
 
 int main( int argc, char* args[] ) {
 	bool quit = false ;
@@ -67,14 +53,13 @@ int main( int argc, char* args[] ) {
 					Transforma(x) ; Transforma(y) ; 
 					
 //					if (tab.Victoria())
-//					else if (tab.Derrota(x,y))
+//					else if (tab.Derrota(x,y)) 
 // 					else 
-					if (evento.button.button == SDL_BUTTON_LEFT)
-						tab.MuestraRecursivo(x,y) ; 
-					else if (evento.button.button == SDL_BUTTON_RIGHT)
-						tab.Bandera(x,y) ;
+						if (evento.button.button == SDL_BUTTON_LEFT)
+							tab.MuestraRecursivo(x,y) ; 
+						else if (evento.button.button == SDL_BUTTON_RIGHT)
+							tab.Bandera(x,y) ;
 
-//Quitar				Des_Transforma(x) ; Des_Transforma(y) ; 
 					Actualiza(tab) ;  
 				}
 			}
@@ -82,6 +67,50 @@ int main( int argc, char* args[] ) {
 	}
 	//Free resources and close SDL
 	close();
+}
+/*
+void Menu (Tablero &tab , bool &quit) {
+	if (!loadMenu()) cerr << "Failed to load menu" << endl ;
+	else {
+		while (!quit) {			SDL_Rect menu ;
+			SDL_RenderCopy(Renderer,Images[Square_Flag], NULL, NULL) ;
+			
+			SDL_PollEvent(&evento) ;
+			if (evento.type == SDL_QUIT) quit = true ;
+			else if (evento.type == SDL_MOUSEBUTTONDOWN) {		
+				int x, y;
+				SDL_GetMouseState(&x, &y);
+
+				int niv ;
+				cout << "Elige un nivel\nFacil = 1\nMedio = 2\nDificil = 3\nHoli = 4" << endl ;
+				cin >> niv ;
+				switch (niv) {
+					case 1: niv = facil ; break ;
+					case 2: niv = medio ; break ;
+					case 3: niv = dificil ; break ;
+					case 4: niv = urbano ; break ;
+					default: niv = facil ; break ;
+			}
+		}
+	}
+	return niv ;
+}
+*/
+bool loadMenu () {
+	bool success = true ;
+	Imag_menu[0] = loadTexture() ;
+		if (Imag_menu[0] == NULL) { cerr << "Unable to load image! 	" << SDL_GetError() << endl ; success = false ; }
+	Imag_menu[1] = loadTexture() ;
+		if (Imag_menu[1] == NULL) { cerr << "Unable to load image! 	" << SDL_GetError() << endl ; success = false ; }
+	Imag_menu[2] = loadTexture() ;
+		if (Imag_menu[2] == NULL) { cerr << "Unable to load image! 	" << SDL_GetError() << endl ; success = false ; }
+	Imag_menu[3] = loadTexture() ;
+		if (Imag_menu[3] == NULL) { cerr << "Unable to load image! 	" << SDL_GetError() << endl ; success = false ; }
+	Imag_menu[4] = loadTexture() ;
+		if (Imag_menu[4] == NULL) { cerr << "Unable to load image! 	" << SDL_GetError() << endl ; success = false ; }
+	Imag_menu[5] = loadTexture() ;
+		if (Imag_menu[5] == NULL) { cerr << "Unable to load image! 	" << SDL_GetError() << endl ; success = false ; }
+	return success ;
 }
 
 SDL_Texture* loadTexture (std::string path) {
