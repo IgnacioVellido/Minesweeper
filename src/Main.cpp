@@ -21,13 +21,6 @@ bool init () ;
 void close () ;
 void Actualiza (Tablero &tab) ;
 
-enum Nivel {
-	principiante = 10 ,
-	intermedio = 40 ,
-	experto = 99 ,
-	//urbano = 60 
-} ;
-
 int main( int argc, char* args[] ) {
 	bool quit = false ;
 	SDL_Event evento ;	
@@ -38,7 +31,7 @@ int main( int argc, char* args[] ) {
 		//Load media
 		if (!loadMedia())	cerr << "Failed to load media!" << endl ;
 		else {
-//			int niv = Menu() ;
+//			Tablero tab(Menu(quit)) ;
 			Tablero tab(5,8) ;
 			Actualiza(tab) ;
 
@@ -69,31 +62,56 @@ int main( int argc, char* args[] ) {
 	close();
 }
 /*
-void Menu (Tablero &tab , bool &quit) {
+enum Nivel {
+	principiante = 10 ,	// 8x8 y 10 bombas
+	intermedio = 40 ,	// 16x16 y 40 bombas
+	experto = 99 ,		// 16x30 y 99 bombas
+} ;
+
+
+Tablero & Menu (bool &quit) {
+	const int MENU_WIDTH = 900 ; ??
+	const int MENU_HEIGHT = 300 ;
+	bool finish = false ;
+	
 	if (!loadMenu()) cerr << "Failed to load menu" << endl ;
 	else {
-		while (!quit) {			SDL_Rect menu ;
-			SDL_RenderCopy(Renderer,Images[Square_Flag], NULL, NULL) ;
-			
+		int tam , nivel ;
+		
+		// Cargando imágenes del menu
+		SDL_Rect menu ; menu.x = ; menu.y ; menu.h = menu.w = ;
+		SDL_RenderSetViewport (Renderer, menu) ;
+		
+		SDL_RenderCopy(Renderer,Imag_menu[0], NULL, NULL) ;
+		
+		SDL_RenderCopy(Renderer,Imag_menu[1], NULL, NULL) ;
+		
+		SDL_RenderCopy(Renderer,Imag_menu[2], NULL, NULL) ;
+		
+		SDL_RenderPresent(Renderer) ;
+		
+		while (!quit || !finish) {			
 			SDL_PollEvent(&evento) ;
 			if (evento.type == SDL_QUIT) quit = true ;
 			else if (evento.type == SDL_MOUSEBUTTONDOWN) {		
 				int x, y;
 				SDL_GetMouseState(&x, &y);
-
-				int niv ;
-				cout << "Elige un nivel\nFacil = 1\nMedio = 2\nDificil = 3\nHoli = 4" << endl ;
-				cin >> niv ;
-				switch (niv) {
-					case 1: niv = facil ; break ;
-					case 2: niv = medio ; break ;
-					case 3: niv = dificil ; break ;
-					case 4: niv = urbano ; break ;
-					default: niv = facil ; break ;
+	
+				if (x < && y <) {
+					tam_f = tam_c = 8 ; nivel = principiante ; finish = true ;
+				}
+				if (x < && y <) {
+					tam_f = tam_c = 16 ; nivel = intermedio ; finish = true ;
+				}
+				if (x < && y <) {
+					tam_f = 16 ; tam_c = 30 ; nivel = experto ; finish = true ;
+				}
 			}
 		}
+		Tablero tablero(tam_f,tam_c,nivel) ;
+		SDL_DestroyRenderer(Renderer) ; // Funcionará ??
+		return tablero ;
 	}
-	return niv ;
 }
 */
 bool loadMenu () {
@@ -104,12 +122,6 @@ bool loadMenu () {
 		if (Imag_menu[1] == NULL) { cerr << "Unable to load image! 	" << SDL_GetError() << endl ; success = false ; }
 	Imag_menu[2] = loadTexture() ;
 		if (Imag_menu[2] == NULL) { cerr << "Unable to load image! 	" << SDL_GetError() << endl ; success = false ; }
-	Imag_menu[3] = loadTexture() ;
-		if (Imag_menu[3] == NULL) { cerr << "Unable to load image! 	" << SDL_GetError() << endl ; success = false ; }
-	Imag_menu[4] = loadTexture() ;
-		if (Imag_menu[4] == NULL) { cerr << "Unable to load image! 	" << SDL_GetError() << endl ; success = false ; }
-	Imag_menu[5] = loadTexture() ;
-		if (Imag_menu[5] == NULL) { cerr << "Unable to load image! 	" << SDL_GetError() << endl ; success = false ; }
 	return success ;
 }
 
@@ -195,7 +207,7 @@ bool loadMedia() {
 
 	return success;
 }
-
+// bool init (int length, int height) (Según el tamaño, length va desde 1 a 3, height desde 1 a 2)
 bool init() {
 	bool success = true;
 
@@ -204,7 +216,7 @@ bool init() {
 		cerr << "SDL could not initialize! SDL_Error:\n" << SDL_GetError() << endl ; success = false;
 	}
 	else {
-		//Create window
+		//Create window // SCREEN_WIDTH * length, SCREEN_HEIGHT * height...
 		Window = SDL_CreateWindow("Buscaminas", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 		if(Window == NULL) {
 			cerr << "Window could not be created! SDL_Error:\n" << SDL_GetError() << endl ; success = false;
@@ -253,9 +265,6 @@ void Actualiza (Tablero &tab) {
 			SDL_RenderSetViewport (Renderer, &tab.matriz[i][j].casilla) ;
 			if (tab.matriz[i][j].bandera == true)
 				SDL_RenderCopy(Renderer,Images[Square_Flag], NULL, NULL) ;
-// Creo que sobra, solo pone banderas y sino su valor, porque por defecto tienen el de ocultación
-//	else if (tab.matriz[i][j].valor == Square_Bomb)
-//		SDL_RenderCopy(Renderer,Images[Square_Hide], NULL, NULL) ;
 			else 
 				SDL_RenderCopy(Renderer,Images[tab.matriz[i][j].valor], NULL, NULL) ;				
 		}
