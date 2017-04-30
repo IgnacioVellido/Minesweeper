@@ -52,9 +52,9 @@ int main( int argc, char* args[] ) {
 			
 					Transforma(x) ; Transforma(y) ; 
 					
-//					if (tab.Victoria())
-//					else if (tab.Derrota(x,y)) 
-// 					else 
+					if (tab.Victoria()) cout << "You win" << endl ; 
+					else if (tab.Derrota(x,y)) cout << "You lose" << endl ;
+ 					else 
 						if (evento.button.button == SDL_BUTTON_LEFT)
 							tab.MuestraRecursivo(x,y) ; 
 						else if (evento.button.button == SDL_BUTTON_RIGHT)
