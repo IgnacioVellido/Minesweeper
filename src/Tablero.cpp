@@ -5,14 +5,14 @@ void Tablero::Bandera (int i, int j) {
 		matriz[i][j].bandera = !matriz[i][j].bandera ;		
 }
 
-int Tablero::GeneraAleatorio (){
+int Tablero::GeneraAleatorio () {
 	random_device rd;  //Will be used to obtain a seed for the random number engine
 	mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
 	uniform_int_distribution<> dis(0, tamanio-1); 
 	return (dis(gen)) ;
 }
 
-	// Añade bombas en posiciones aleatorias hasta un maximo definido por el nivel  - FUNCIONA
+// Añade bombas en posiciones aleatorias hasta un maximo definido por el nivel  - FUNCIONA
 void Tablero::InsertBomb () {
 	int fila , colum ,
 	    contador = 0 ;
@@ -26,7 +26,8 @@ void Tablero::InsertBomb () {
 		} 
 	}
 } 
-	// Precondición: No es bomba
+
+// Precondición: No es bomba
 void Tablero::CalculaValor (int fila, int colum) {
 	bool accesible ; matriz[fila][colum].valor = 0 ;
 	for (int i = fila - 1 ; i <= fila+1 ; i++) { 
@@ -64,7 +65,7 @@ void Tablero::MuestraRecursivo (int fila , int colum) {
 }
 	
 // Muestra todas las casillas que no son bomba
-void Tablero::Derrota (int x, int y) {
+bool Tablero::Derrota (int x, int y) {
 	bool derrota = false ;
 	if (matriz[x][y].valor == Square_Bomb) {
 		for (int i = 0 ; i < tamanio ; i++) {
@@ -93,16 +94,3 @@ bool Tablero::Victoria () {
 	}
 	return victoria ;
 }
-
-/*
-// Para probar
-int main () {
-	Tablero juego(8,8) ;	// 5 bombas, 8x8
-
-	for (int i = 0 ; i < 8 ; i++) {
-		for (int j = 0 ; j < 8 ; j++) 
-				cout << juego.matriz[i][j].valor << " " ;
-		cout << endl ;
-	}
-	
-}*/
