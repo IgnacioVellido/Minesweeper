@@ -44,18 +44,19 @@ int main( int argc, char* args[] ) {
 					SDL_GetMouseState(&x, &y);
 			
 					Transforma(x) ; Transforma(y) ; 
-					
-					if (tab.Victoria()) cout << "You win" << endl ; 
-					else if (tab.Derrota(x,y)) cout << "You lose" << endl ;
- 					else 
-						if (evento.button.button == SDL_BUTTON_LEFT)
-							tab.MuestraRecursivo(x,y) ; 
-						else if (evento.button.button == SDL_BUTTON_RIGHT)
-							tab.Bandera(x,y) ;
+
+					if (evento.button.button == SDL_BUTTON_LEFT) {
+						tab.MuestraRecursivo(x,y) ; 
+						if (tab.Victoria()) { cout << "You win" << endl ; quit = true ; }
+						else if (tab.Derrota(x,y)) { cout << "You lose" << endl ; quit = true ; }
+					}
+					else if (evento.button.button == SDL_BUTTON_RIGHT)
+						tab.Bandera(x,y) ;
 
 					Actualiza(tab) ;  
 				}
 			}
+			SDL_Delay(2000) ;
 		}
 	}
 	//Free resources and close SDL
@@ -113,7 +114,7 @@ Tablero & Menu (bool &quit) {
 		return tablero ;
 	}
 }
-*/
+
 bool loadMenu () {
 	bool success = true ;
 	Imag_menu[0] = loadTexture() ;
@@ -124,7 +125,7 @@ bool loadMenu () {
 		if (Imag_menu[2] == NULL) { cerr << "Unable to load image! 	" << SDL_GetError() << endl ; success = false ; }
 	return success ;
 }
-
+*/
 SDL_Texture* loadTexture (std::string path) {
 	SDL_Texture* newTexture = NULL ;
 	SDL_Surface* loadedSurface = IMG_Load(path.c_str()) ;
@@ -263,8 +264,15 @@ void Actualiza (Tablero &tab) {
 			tab.matriz[i][j].casilla.x = i*BUTTON_WIDTH_HEIGHT ; tab.matriz[i][j].casilla.y = j*BUTTON_WIDTH_HEIGHT ;
 			tab.matriz[i][j].casilla.w = tab.matriz[i][j].casilla.h = BUTTON_WIDTH_HEIGHT ;
 			SDL_RenderSetViewport (Renderer, &tab.matriz[i][j].casilla) ;
+			
 			if (tab.matriz[i][j].bandera == true)
 				SDL_RenderCopy(Renderer,Images[Square_Flag], NULL, NULL) ;
+			else if (tab.matriz[i][j].valor == Square_Bomb) { 
+				if (tab.matriz[i][j].mostrada == true) 
+					SDL_RenderCopy(Renderer,Images[Square_Bomb], NULL, NULL) ;									
+				else
+					SDL_RenderCopy(Renderer,Images[Square_Hide], NULL, NULL) ;
+			}
 			else 
 				SDL_RenderCopy(Renderer,Images[tab.matriz[i][j].valor], NULL, NULL) ;				
 		}

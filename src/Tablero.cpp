@@ -72,8 +72,8 @@ bool Tablero::Derrota (int x, int y) {
 			for (int j = 0 ; j < tamanio ; j++) {
 				if (matriz[i][j].mostrada == false && matriz[i][j].valor != Square_Bomb) {
 					CalculaValor(i,j) ; 
-					matriz[i][j].mostrada == true ;
-				}
+				}					
+				matriz[i][j].mostrada = true ;
 			}
 		}
 		matriz[x][y].valor = Square_Boom ;
