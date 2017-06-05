@@ -36,6 +36,7 @@ int main( int argc, char* args[] ) {
 			Actualiza(tab) ;
 
 			while(!quit) {
+				const int start_time_ms = SDL_GetTicks () ;
 				SDL_PollEvent(&evento) ;
 				if (evento.type == SDL_QUIT) quit = true ;
 				else if (evento.type == SDL_MOUSEBUTTONDOWN) {		
@@ -55,6 +56,10 @@ int main( int argc, char* args[] ) {
 
 					Actualiza(tab) ;  
 				}
+
+				// Para que sea a 60 fps
+				const int elapsed_time_ms = SDL_GetTicks () - start_time_ms ;
+				SDL_Delay(1000/*ms*/ / 60/*fps*/ - elapsed_time_ms /*ms*/) ;
 			}
 			SDL_Delay(2000) ;
 		}
