@@ -1,3 +1,3 @@
 # Minesweeper
 
-Simple Minesweeper game made in OpenGL
+Simple Minesweeper game made in SDL
